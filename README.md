@@ -9,7 +9,6 @@ A production-ready Python application that extracts text from various documents 
   - PDFs: `docling`, `pdfplumber`, `PyMuPDF`
   - OCR (Images/Scanned PDFs): `pytesseract`, `easyocr`
   - Documents: `python-docx` (DOCX), `beautifulsoup4` (HTML)
-  - Fallback: `textract` (Supports numerous formats)
 - **Graceful Error Handling**: Individual extractor failures do not crash the application.
 - **CLI Interface**: User-friendly command-line interface with verbose logging and JSON output support.
 
@@ -17,11 +16,10 @@ A production-ready Python application that extracts text from various documents 
 - Python 3.10+
 - `tesseract-ocr` (For pytesseract OCR)
 - `poppler-utils` (For pdf to image conversions / pdfplumber)
-- `antiword` (For textract DOC fallback)
 
 Ubuntu/Debian installation:
 ```bash
-sudo apt-get install tesseract-ocr poppler-utils antiword
+sudo apt-get install tesseract-ocr poppler-utils
 ```
 
 ## Installation
@@ -32,15 +30,14 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-2. Due to older metadata in the `textract` package, you need a slightly older pip version before installing requirements:
+2. Install requirements:
 ```bash
-pip install "pip<24.1"
 pip install -r requirements.txt
 ```
 
 
 ```
-sudo apt-get update && sudo apt-get install -y tesseract-ocr poppler-utils antiword
+sudo apt-get update && sudo apt-get install -y tesseract-ocr poppler-utils
 ```
 ## Usage
 

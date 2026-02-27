@@ -13,7 +13,6 @@ The **Smart Document Text Extraction App** is an intelligent, autonomous pipelin
 ### 3.1. Universal File Ingestion
 - Auto-detect formats via extension and MIME-type validation.
 - **Native Support:** `.pdf`, `.png`, `.jpg`, `.jpeg`, `.docx`, `.html`.
-- **Fallback Support:** Leverages `textract` to brute-force unsupported formats (e.g. `.rtf`, `.msg`).
 
 ### 3.2. Extraction Orchestrator
 - Does **not** blindly merge text strings (prevents data corruption and duplication).

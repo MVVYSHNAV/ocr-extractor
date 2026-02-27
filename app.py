@@ -82,7 +82,7 @@ def main():
     # Selection for extraction engine
     extractor_choices = [
         "Auto-Select", "docling", "pdfplumber", "PyMuPDF", 
-        "easyocr", "pytesseract", "python-docx", "beautifulsoup4", "textract"
+        "easyocr", "pytesseract", "python-docx", "beautifulsoup4"
     ]
     selected_extractor = st.selectbox("Extraction Mode", extractor_choices, index=0)
     

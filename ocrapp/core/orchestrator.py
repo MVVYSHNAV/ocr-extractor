@@ -7,7 +7,6 @@ from ocrapp.scoring.scorer import TextScorer
 from ocrapp.extractors.pdf_extractors import DoclingExtractor, PdfPlumberExtractor, PyMuPDFExtractor
 from ocrapp.extractors.ocr_extractors import PytesseractExtractor, EasyOCRExtractor
 from ocrapp.extractors.doc_extractors import DocxExtractor, HtmlExtractor
-from ocrapp.extractors.fallback import TextractExtractor
 
 logger = logging.getLogger(__name__)
 
@@ -30,8 +29,6 @@ class DocumentExtractor:
         
         self.docx = DocxExtractor()
         self.html = HtmlExtractor()
-        
-        self.fallback = TextractExtractor()
         logger.info("Extractors initialized successfully.")
 
     def _get_extractors_for_file(self, file_path: str) -> List[Any]:
@@ -55,9 +52,6 @@ class DocumentExtractor:
             
         elif ext in ['.html', '.htm'] or mime == 'text/html':
             extractors.append(self.html)
-            
-        # Always append fallback
-        extractors.append(self.fallback)
         
         return extractors
 
@@ -71,7 +65,7 @@ class DocumentExtractor:
         all_extractors = [
             self.docling, self.pdfplumber, self.pymupdf,
             self.pytesseract, self.easyocr,
-            self.docx, self.html, self.fallback
+            self.docx, self.html
         ]
             
         if extractor_name and extractor_name != "Auto-Select":
