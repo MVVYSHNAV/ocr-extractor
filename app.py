@@ -77,6 +77,13 @@ def main():
 
     uploaded_file = st.file_uploader("Choose a file to extract...", type=['pdf', 'png', 'jpg', 'jpeg', 'docx', 'html', 'txt'])
     
+    # Selection for extraction engine
+    extractor_choices = [
+        "Auto-Select", "docling", "pdfplumber", "PyMuPDF", 
+        "easyocr", "pytesseract", "python-docx", "beautifulsoup4", "textract"
+    ]
+    selected_extractor = st.selectbox("Extraction Mode", extractor_choices, index=0)
+    
     if uploaded_file is not None:
         # If user uploads a new file, reset the result
         if st.session_state.last_uploaded_file != uploaded_file.name:
@@ -89,7 +96,8 @@ def main():
             with st.spinner("Initializing Extractors (Heavy models may take a moment)..."):
                 extractor = get_extractor()
                 
-            with st.spinner(f"Extracting '{uploaded_file.name}' using multiple engines..."):
+            mode_text = "auto-selected best engine" if selected_extractor == "Auto-Select" else f"[{selected_extractor}]"
+            with st.spinner(f"Extracting '{uploaded_file.name}' using {mode_text}..."):
                 # Save uploaded file to a temporary location for the extractors to read
                 with tempfile.NamedTemporaryFile(delete=False, suffix=f".{uploaded_file.name.split('.')[-1]}") as tmp_file:
                     tmp_file.write(uploaded_file.getvalue())
@@ -97,7 +105,7 @@ def main():
                     
                 try:
                     start_time = time.time()
-                    result = extractor.process(tmp_path)
+                    result = extractor.process(tmp_path, extractor_name=selected_extractor)
                     process_time = time.time() - start_time
                     result['process_time'] = process_time
                     st.session_state.processing_result = result

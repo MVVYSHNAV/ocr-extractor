@@ -61,14 +61,27 @@ class DocumentExtractor:
         
         return extractors
 
-    def process(self, file_path: str) -> Dict[str, Any]:
+    def process(self, file_path: str, extractor_name: str = "Auto-Select") -> Dict[str, Any]:
         """
-        Process a file and return the best extraction result.
+        Process a file and return the best extraction result, or the explicitly requested one.
         """
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"File not found: {file_path}")
             
-        extractors = self._get_extractors_for_file(file_path)
+        all_extractors = [
+            self.docling, self.pdfplumber, self.pymupdf,
+            self.pytesseract, self.easyocr,
+            self.docx, self.html, self.fallback
+        ]
+            
+        if extractor_name and extractor_name != "Auto-Select":
+            # Find the specific extractor requested
+            extractors = [e for e in all_extractors if e.name == extractor_name]
+            if not extractors:
+                raise ValueError(f"Unknown extractor: {extractor_name}")
+        else:
+            # Auto-route
+            extractors = self._get_extractors_for_file(file_path)
         
         results = []
         
