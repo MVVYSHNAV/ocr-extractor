@@ -11,6 +11,11 @@ class PytesseractExtractor(BaseExtractor):
         return "pytesseract"
         
     def extract(self, file_path: str) -> str:
+        # Check if tesseract is installed
+        import shutil
+        if not shutil.which("tesseract"):
+            raise FileNotFoundError("Tesseract is not installed on the system.")
+            
         images = []
         if is_pdf(file_path):
             images = pdf_to_images(file_path)
@@ -23,6 +28,10 @@ class PytesseractExtractor(BaseExtractor):
             full_text.append(text)
             
         return "\n".join(full_text)
+
+import logging
+# Suppress easyocr warning
+logging.getLogger("easyocr.easyocr").setLevel(logging.ERROR)
 
 class EasyOCRExtractor(BaseExtractor):
     def __init__(self):

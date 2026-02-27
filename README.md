@@ -57,6 +57,16 @@ python -m ocrapp.cli path/to/document.pdf --verbose
 python -m ocrapp.cli path/to/document.pdf --json
 ```
 
+### Streamlit Web Application
+You can also run the web interface which provides an easy-to-use drag and drop UI to upload your files, preview text, view the absolute winner and their scores, and easily download and manage text extraction results.
+
+Ensure you are in the application folder and your virtual environment is activated:
+```bash
+source venv/bin/activate
+streamlit run app.py
+```
+This will launch a local server and give you an address you can open in your browser (typically `http://localhost:8501`).
+
 ### Module Import
 You can use the `DocumentExtractor` directly in your Python code:
 
