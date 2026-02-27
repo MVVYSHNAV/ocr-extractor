@@ -3,6 +3,8 @@ import os
 import tempfile
 import json
 import time
+import io
+import pandas as pd
 from datetime import datetime
 
 from ocrapp.core.orchestrator import DocumentExtractor
@@ -134,17 +136,76 @@ def main():
         
         with col2:
             st.markdown("<br>", unsafe_allow_html=True)
-            # Create download button
+            
+            # Preparation for data formats
+            extracted_text = res['text']
+            file_base = st.session_state.last_uploaded_file
+            
+            # JSON format
+            json_data = json.dumps({
+                "source_file": file_base,
+                "best_extractor": res['source'],
+                "confidence_score": res['score'],
+                "extracted_text": extracted_text
+            }, indent=2)
+            
+            # CSV/Excel formats (Splitting by lines to create a structured table)
+            lines = [line.strip() for line in extracted_text.split('\n') if line.strip()]
+            df = pd.DataFrame({"Extracted Lines": lines})
+            csv_data = df.to_csv(index=False).encode('utf-8')
+            
+            # Excel Buffer
+            excel_buffer = io.BytesIO()
+            with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
+                df.to_excel(writer, index=False, sheet_name='Extracted Text')
+            excel_data = excel_buffer.getvalue()
+
+            st.markdown("**Export Options:**")
+            
+            d_col1, d_col2 = st.columns(2)
+            with d_col1:
+                st.download_button(
+                    label="⬇️ TXT",
+                    data=extracted_text,
+                    file_name=f"{file_base}_extracted.txt",
+                    mime="text/plain",
+                    use_container_width=True
+                )
+                st.download_button(
+                    label="⬇️ CSV",
+                    data=csv_data,
+                    file_name=f"{file_base}_extracted.csv",
+                    mime="text/csv",
+                    use_container_width=True
+                )
+                
+            with d_col2:
+                st.download_button(
+                    label="⬇️ JSON",
+                    data=json_data,
+                    file_name=f"{file_base}_extracted.json",
+                    mime="application/json",
+                    use_container_width=True
+                )
+                st.download_button(
+                    label="⬇️ Markdown",
+                    data=extracted_text,  # Docling natively outputs markdown, text remains text
+                    file_name=f"{file_base}_extracted.md",
+                    mime="text/markdown",
+                    use_container_width=True
+                )
+                
             st.download_button(
-                label="⬇️ Download Raw Text",
-                data=res['text'],
-                file_name=f"{st.session_state.last_uploaded_file}_extracted.txt",
-                mime="text/plain",
+                label="⬇️ Excel (.xlsx)",
+                data=excel_data,
+                file_name=f"{file_base}_extracted.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 use_container_width=True
             )
             
             # Save to disk functionality
-            if st.button("📁 Save to Results Folder", use_container_width=True):
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("📁 Save Default TXT to Server Results", use_container_width=True):
                 out_path = save_result(st.session_state.last_uploaded_file, res)
                 st.success(f"Saved locally to `{out_path}`")
                 

@@ -38,6 +38,10 @@ pip install "pip<24.1"
 pip install -r requirements.txt
 ```
 
+
+```
+sudo apt-get update && sudo apt-get install -y tesseract-ocr poppler-utils antiword
+```
 ## Usage
 
 ### Command Line Interface (CLI)
